@@ -1,4 +1,5 @@
 import { Saving } from "@/types/saving";
+import { formatDate } from "@/lib/format";
 
 type HistoryListProps = {
   savings: Saving[];

@@ -17,17 +17,15 @@ const mockSavings: Saving[] = [
   },
 ];
 
-const mockBalance = {
-  total: 1000,
-};
-
 export default function Home() {
+  const total = mockSavings.reduce((sum, saving) => sum + saving.amount, 0);
+
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto max-w-2xl space-y-6">
         <h1 className="text-2xl font-bold">ごほうび貯金</h1>
 
-        <BalanceCard total={mockBalance.total} />
+        <BalanceCard total={total} />
 
         <HistoryList savings={mockSavings} />
       </div>
