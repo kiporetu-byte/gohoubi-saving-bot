@@ -23,3 +23,13 @@ npm run dev
 ```
 
 起動後、 http://localhost:3000 にアクセスして動作確認を行ってください。
+
+## 💡 データベースの確認方法 (Prisma Studio)
+
+以下のコマンドを実行すると、ブラウザ上でGUIを使ってデータベースのレコードを確認・編集できます。
+
+```bash
+npx prisma studio
+```
+
+起動後、 http://localhost:5555 にアクセスしてください。
