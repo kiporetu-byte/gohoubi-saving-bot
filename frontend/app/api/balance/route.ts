@@ -1,9 +1,19 @@
-import { prisma } from "@/lib/prisma";
+import { getBalance } from "@/lib/balance";
 
 export async function GET() {
-  const savings = await prisma.saving.findMany();
+  try {
+    const total = await getBalance();
 
-  const total = savings.reduce((sum, s) => sum + (s.amount ?? 0), 0);
+    return Response.json({
+      total,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error(error);
 
-  return Response.json({ total });
+    return Response.json(
+      { message: "残高取得に失敗しました" },
+      { status: 500 }
+    );
+  }
 }

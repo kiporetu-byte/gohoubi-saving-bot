@@ -1,15 +1,23 @@
 import { prisma } from "./prisma";
+import { fetchBalanceFromSunabar } from "@/lib/sunabar";
 
 //残高取得
-export async function getBalance(lineUserId: string) {
-  const user = await prisma.user.findUnique({
-    where: { lineUserId },
-    include: { savings: true },
-  });
+export async function getBalance() { 
+  const balanceUrl = process.env.SUNABAR_BALANCE_URL;
+  const token = process.env.SUNABAR_API_TOKEN;
 
-  if (!user) return 0;
+  // 🔵 Sunabar設定がある場合はAPIから残高取得
+  if (balanceUrl && token) {
+    const data = await fetchBalanceFromSunabar();
 
-  return user.savings.reduce((sum, s) => sum + s.amount, 0);
+    // spAccountBalances → つかいわけ口座の残高
+    return Number(data.spAccountBalances?.[0]?.odBalance ?? 0);
+  }
+
+  // 🟡 fallback:
+  // Sunabar未設定時（ローカル環境・開発用）はDBの合計を返す
+   const savings = await prisma.saving.findMany();
+  return savings.reduce((sum, s) => sum + (s.amount ?? 0), 0);
 }
 
 //履歴取得
