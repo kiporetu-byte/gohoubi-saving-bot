@@ -46,5 +46,25 @@ export function formatHistoryMessage(
     (item) => `・${item.actionLabel} +${item.amount.toLocaleString()}円`
   );
 
-  return ["最近の貯金履歴です", ...lines].join("\n");
+  return `最近の貯金履歴です\n${lines.join("\n")}`;
 }
+
+// 貯金成功 → LINE表示用
+export function formatSavingMessage(amount: number, total: number) {
+  return `＋${amount.toLocaleString()}円貯金しました！\n今の残高は${total.toLocaleString()}円です。`;
+}
+
+// エラー → LINE表示用
+export function formatErrorMessage() {
+  return "エラーが発生しました。時間をおいてもう一度お試しください。";
+}
+
+console.log(formatBalanceMessage(4500));
+console.log(formatSavingMessage(500, 4500));
+console.log(formatErrorMessage());
+console.log(
+  formatHistoryMessage([
+    { actionLabel: "運動", amount: 1000 },
+    { actionLabel: "スタバ我慢", amount: 500 },
+  ])
+);
