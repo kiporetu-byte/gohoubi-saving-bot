@@ -18,7 +18,7 @@ function judgeMessage(messageText?: string) {
     return "unsupported";
   }
   
-export async function POST(req: Request) {
+  export async function POST(req: Request) {
     try {
       const body = await req.json();
   
@@ -27,11 +27,13 @@ export async function POST(req: Request) {
   
       console.log("受信メッセージ:", messageText);
   
-      if (messageText === "運動した") {
+      const messageType = judgeMessage(messageText);
+  
+      if (messageType === "exercise") {
         console.log("→ 運動した と判定されました");
-      } else if (messageText === "スタバ我慢した") {
+      } else if (messageType === "saveCoffee") {
         console.log("→ スタバ我慢した と判定されました");
-      } else if (messageText === "残高照会") {
+      } else if (messageType === "checkBalance") {
         console.log("→ 残高照会 と判定されました");
       } else {
         console.log("→ 未対応メッセージです");
