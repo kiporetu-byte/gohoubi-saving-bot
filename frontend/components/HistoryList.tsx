@@ -8,7 +8,7 @@ type HistoryListProps = {
 export default function HistoryList({ savings }: HistoryListProps) {
   return (
     <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold">貯金履歴</h2>
+      <h2 className="mb-4 text-lg font-semibold text-gray-500">貯金履歴</h2>
 
       {savings.length === 0 ? (
         <p className="text-sm text-gray-500">まだ履歴がありません</p>
@@ -20,8 +20,8 @@ export default function HistoryList({ savings }: HistoryListProps) {
               className="flex items-center justify-between border-b pb-2"
             >
               <div>
-                <p className="font-medium">{saving.actionLabel}</p>
-                <p className="text-sm text-gray-500">{saving.createdAt}</p>
+                <p className="font-medium text-gray-500">{saving.actionLabel}</p>
+                <p className="text-sm text-gray-400">{saving.createdAt}</p>
               </div>
               <p className="font-semibold text-green-600">
                 +{saving.amount.toLocaleString()}円
