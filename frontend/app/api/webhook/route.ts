@@ -1,7 +1,6 @@
 //LINE Webhook受信用のAPI(LINEからのメッセージを受け取る入口)
+import { replyText } from "@/lib/line";
 
-//LINE Developersに設定したWebhook URLからのPOSTリクエストを受け取るエンドポイント。
-//疎通確認のため、受信した内容をログに出力し、正常時は200を返す。
 function judgeMessage(messageText?: string) {
     if (messageText === "運動した") {
       return "exercise";
@@ -24,6 +23,7 @@ function judgeMessage(messageText?: string) {
   
       const event = body.events?.[0];
       const messageText = event?.message?.text;
+      const replyToken = event?.replyToken;
   
       console.log("受信メッセージ:", messageText);
   
@@ -37,6 +37,8 @@ function judgeMessage(messageText?: string) {
         console.log("→ 残高照会 と判定されました");
       } else {
         console.log("→ 未対応メッセージです");
+  
+        await replyText(replyToken, "未対応のメッセージです");
       }
   
       return Response.json({ ok: true }, { status: 200 });
@@ -44,4 +46,4 @@ function judgeMessage(messageText?: string) {
       console.error("Webhook error:", error);
       return Response.json({ ok: false }, { status: 500 });
     }
-  }
+}

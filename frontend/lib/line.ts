@@ -1,0 +1,18 @@
+export async function replyText(replyToken: string, text: string) {
+    await fetch("https://api.line.me/v2/bot/message/reply", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        replyToken: replyToken,
+        messages: [
+          {
+            type: "text",
+            text: text,
+          },
+        ],
+      }),
+    });
+  }
