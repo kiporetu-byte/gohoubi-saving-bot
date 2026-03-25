@@ -32,7 +32,7 @@ model Saving {
   actionLabel String
   amount      Int
   messageText String?
-  lineEventId String?    @unique
+  lineEventId String    @unique
   createdAt   DateTime   @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
