@@ -34,7 +34,7 @@ export function formatBalanceMessage(total: number) {
   return `今の残高は${total.toLocaleString()}円です。`;
 }
 
-//履歴 → LINE表示用
+// 履歴 → LINE表示用
 export function formatHistoryMessage(
   history: { actionLabel: string; amount: number }[]
 ) {
@@ -46,5 +46,34 @@ export function formatHistoryMessage(
     (item) => `・${item.actionLabel} +${item.amount.toLocaleString()}円`
   );
 
-  return ["最近の貯金履歴です", ...lines].join("\n");
+  return `最近の貯金履歴です\n${lines.join("\n")}`;
+}
+
+// 貯金成功 → LINE表示用
+export function formatSavingMessage(amount: number, total: number) {
+  return `＋${amount.toLocaleString()}円貯金しました！\n今の残高は${total.toLocaleString()}円です。`;
+}
+
+// エラー → LINE表示用
+export function formatErrorMessage() {
+  return "エラーが発生しました。時間をおいてもう一度お試しください。";
+}
+
+// C担当が呼ぶ用
+export function getBalanceReplyMessage(total: number) {
+  return formatBalanceMessage(total);
+}
+
+export function getSavingReplyMessage(amount: number, total: number) {
+  return formatSavingMessage(amount, total);
+}
+
+export function getHistoryReplyMessage(
+  history: { actionLabel: string; amount: number }[]
+) {
+  return formatHistoryMessage(history);
+}
+
+export function getErrorReplyMessage() {
+  return formatErrorMessage();
 }
