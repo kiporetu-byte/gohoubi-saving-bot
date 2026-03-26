@@ -29,7 +29,7 @@ export async function transferToSaving(amount: number) {
 }
 
 // 残高照会
-export async function fetchBalanceFromSunabar() {
+export async function fetchBalanceFromSunabar(lineUserId: string) {
   const balanceUrl = process.env.SUNABAR_BALANCE_URL;
   const token = process.env.SUNABAR_API_TOKEN;
 
@@ -46,7 +46,8 @@ export async function fetchBalanceFromSunabar() {
   });
 
   const data = await res.json();
-
+  
+  console.log(lineUserId);
   console.log("--- sunabar balance response ---");
   console.log(JSON.stringify(data, null, 2));
   console.log("--------------------------------");
