@@ -2,53 +2,47 @@ import { prisma } from "./prisma";
 import { fetchBalanceFromSunabar } from "@/lib/sunabar";
 
 //残高取得
-export async function getBalance(lineUserId: string) { 
+export async function getBalance(lineUserId: string) {
   const balanceUrl = process.env.SUNABAR_BALANCE_URL;
   const token = process.env.SUNABAR_API_TOKEN;
   const depositAccountId = process.env.SUNABAR_DEPOSIT_ACCOUNT;
 
-  // 🔵 Sunabar設定がある場合はAPIから残高取得
+  console.log("getBalance lineUserId:", lineUserId);
+  console.log("SUNABAR_BALANCE_URL exists:", !!balanceUrl);
+  console.log("SUNABAR_API_TOKEN exists:", !!token);
+  console.log("SUNABAR_DEPOSIT_ACCOUNT:", depositAccountId);
+
+  // Sunabar設定がある場合はAPIから残高取得
   if (balanceUrl && token && depositAccountId) {
     const data = await fetchBalanceFromSunabar(lineUserId);
 
     const targetAccount = data.spAccountBalances?.find(
-      (account: { accountId?: string; spAccountId?: string; odBalance?: string | number }) =>
-        account.accountId === depositAccountId || account.spAccountId === depositAccountId
+      (account: {
+        accountId?: string;
+        spAccountId?: string;
+        odBalance?: string | number;
+      }) =>
+        account.accountId === depositAccountId ||
+        account.spAccountId === depositAccountId
     );
+
+    console.log("targetAccount:", targetAccount);
 
     return Number(targetAccount?.odBalance ?? 0);
   }
 
-  // 🟡 fallback:
-  // Sunabar未設定時（ローカル環境・開発用）はDBの合計を返す
-   const savings = await prisma.saving.findMany();
-  return savings.reduce((sum, s) => sum + (s.amount ?? 0), 0);
-}
+  // fallback: ユーザー別にDB合計を返す
+  const user = await prisma.user.findUnique({
+    where: { lineUserId },
+    include: { savings: true },
+  });
 
-// 残高 → LINE表示用
-export function formatBalanceMessage(total: number) {
-  return `今の残高は${total.toLocaleString()}円です。`;
-}
+  console.log("fallback user:", user);
 
-// 貯金成功 → LINE表示用
-export function formatSavingMessage(amount: number, total: number) {
-  return `＋${amount.toLocaleString()}円貯金しました！\n今の残高は${total.toLocaleString()}円です。`;
-}
+  if (!user) return 0;
 
-// エラー → LINE表示用
-export function formatErrorMessage() {
-  return "エラーが発生しました。時間をおいてもう一度お試しください。";
-}
-
-// C担当が呼ぶ用
-export function getBalanceReplyMessage(total: number) {
-  return formatBalanceMessage(total);
-}
-
-export function getSavingReplyMessage(amount: number, total: number) {
-  return formatSavingMessage(amount, total);
-}
-
-export function getErrorReplyMessage() {
-  return formatErrorMessage();
+  return user.savings.reduce(
+    (sum: number, s: { amount?: number }) => sum + (s.amount ?? 0),
+    0
+  );
 }
