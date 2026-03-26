@@ -2,16 +2,21 @@ import { prisma } from "./prisma";
 import { fetchBalanceFromSunabar } from "@/lib/sunabar";
 
 //残高取得
-export async function getBalance() { 
+export async function getBalance() { //lineUserId: string
   const balanceUrl = process.env.SUNABAR_BALANCE_URL;
   const token = process.env.SUNABAR_API_TOKEN;
+  const depositAccountId = process.env.SUNABAR_DEPOSIT_ACCOUNT;
 
   // 🔵 Sunabar設定がある場合はAPIから残高取得
-  if (balanceUrl && token) {
+  if (balanceUrl && token && depositAccountId) {
     const data = await fetchBalanceFromSunabar();
 
-    // spAccountBalances → つかいわけ口座の残高
-    return Number(data.spAccountBalances?.[0]?.odBalance ?? 0);
+    const targetAccount = data.spAccountBalances?.find(
+      (account: { accountId?: string; spAccountId?: string; odBalance?: string | number }) =>
+        account.accountId === depositAccountId || account.spAccountId === depositAccountId
+    );
+
+    return Number(targetAccount?.odBalance ?? 0);
   }
 
   // 🟡 fallback:
