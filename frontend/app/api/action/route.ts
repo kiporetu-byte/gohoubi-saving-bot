@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
   const total = await getBalance(body.lineUserId);
 
   return NextResponse.json({
-    message: '貯金しました',
+    message: `💎 ごほうび貯金
+  
+  ＋500円貯金しました！✨
+  現在の残高は${total.toLocaleString()}円です`,
     amount: 500,
     total,
   });
