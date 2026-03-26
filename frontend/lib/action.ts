@@ -16,14 +16,13 @@ export async function saveAction({
   lineEventId: string;
 }) {
   // 二重登録防止
-  if (lineEventId) {
-    const exists = await prisma.saving.findUnique({
-      where: { lineEventId },
-    });
 
-    if (exists) {
-      return exists;
-    }
+  const exists = await prisma.saving.findUnique({
+    where: { lineEventId },
+  });
+
+  if (exists) {
+    return exists;
   }
 
   // actionLabel 自動設定
