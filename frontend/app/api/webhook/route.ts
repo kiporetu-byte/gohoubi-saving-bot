@@ -1,6 +1,6 @@
 //LINE Webhook受信用のAPI(LINEからのメッセージを受け取る入口)
+// LINE Webhook受信用のAPI(LINEからのメッセージを受け取る入口)
 import { replyText } from "@/lib/line";
-
 
 function judgeMessage(messageText?: string) {
   if (messageText === "運動した") return "exercise";
@@ -31,9 +31,39 @@ export async function POST(req: Request) {
     const messageType = judgeMessage(messageText);
 
     if (messageType === "exercise") {
-      // 今は触らなくてOK
+      const actionResponse = await fetch(`${appBaseUrl}/api/action`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lineUserId,
+          actionType: "EXERCISE",
+          actionLabel: "運動した",
+          lineEventId: event?.webhookEventId,
+        }),
+      });
+
+      const actionData = await actionResponse.json();
+
+      await replyText(replyToken, actionData.message);
     } else if (messageType === "saveCoffee") {
-      // 今は触らなくてOK
+      const actionResponse = await fetch(`${appBaseUrl}/api/action`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lineUserId,
+          actionType: "SKIP_STARBUCKS",
+          actionLabel: "スタバ我慢した",
+          lineEventId: event?.webhookEventId,
+        }),
+      });
+
+      const actionData = await actionResponse.json();
+
+      await replyText(replyToken, actionData.message);
     } else if (messageType === "checkBalance") {
       const balanceResponse = await fetch(
         `${appBaseUrl}/api/balance?lineUserId=${lineUserId}`
