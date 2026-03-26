@@ -27,3 +27,33 @@ export async function transferToSaving(amount: number) {
 
   return res.ok;
 }
+
+// 残高照会
+export async function fetchBalanceFromSunabar() {
+  const balanceUrl = process.env.SUNABAR_BALANCE_URL;
+  const token = process.env.SUNABAR_API_TOKEN;
+
+  if (!balanceUrl || !token) {
+    throw new Error("SUNABAR_BALANCE_URL または SUNABAR_API_TOKEN が未設定です");
+  }
+
+  const res = await fetch(balanceUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": token,
+    },
+  });
+
+  const data = await res.json();
+
+  console.log("--- sunabar balance response ---");
+  console.log(JSON.stringify(data, null, 2));
+  console.log("--------------------------------");
+
+  if (!res.ok) {
+    throw new Error("sunabar残高照会に失敗しました");
+  }
+
+  return data;
+}
