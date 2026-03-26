@@ -1,6 +1,6 @@
 //LINE Webhook受信用のAPI(LINEからのメッセージを受け取る入口)
 import { replyText } from "@/lib/line";
-import { getSavingReplyMessage } from "@/lib/balance";
+
 
 function judgeMessage(messageText?: string) {
   if (messageText === "運動した") return "exercise";
@@ -31,45 +31,22 @@ export async function POST(req: Request) {
     const messageType = judgeMessage(messageText);
 
     if (messageType === "exercise") {
-      const actionResponse = await fetch(`${appBaseUrl}/api/action`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lineUserId,
-          actionType: "EXERCISE",
-          actionLabel: "運動した",
-        }),
-      });
-
-      const actionData = await actionResponse.json();
-
-      await replyText(
-        replyToken,
-        getSavingReplyMessage(500, actionData.total)
-      );
+      // 今は触らなくてOK
     } else if (messageType === "saveCoffee") {
-      const actionResponse = await fetch(`${appBaseUrl}/api/action`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lineUserId,
-          actionType: "SKIP_STARBUCKS",
-          actionLabel: "スタバ我慢した",
-        }),
-      });
+      // 今は触らなくてOK
+    } else if (messageType === "checkBalance") {
+      const balanceResponse = await fetch(
+        `${appBaseUrl}/api/balance?lineUserId=${lineUserId}`
+      );
 
-      const actionData = await actionResponse.json();
+      const balanceData = await balanceResponse.json();
 
       await replyText(
         replyToken,
-        getSavingReplyMessage(500, actionData.total)
+        `💎 ごほうび貯金
+
+現在の残高は${balanceData.total.toLocaleString()}円です✨`
       );
-    } else if (messageType === "checkBalance") {
-      await replyText(replyToken, "残高照会は現在準備中です");
     } else {
       await replyText(replyToken, "未対応のメッセージです");
     }
