@@ -1,4 +1,4 @@
-import { getBalance } from "@/lib/balance";
+import { getBalance } from '@/lib/balance';
 
 export async function GET(req: Request) {
   try {
@@ -24,8 +24,8 @@ export async function GET(req: Request) {
     console.error(error);
 
     return Response.json(
-      { message: "残高取得に失敗しました" },
-      { status: 500 }
+      { message: '残高取得に失敗しました' },
+      { status: 500 },
     );
   }
 }
